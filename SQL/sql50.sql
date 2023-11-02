@@ -314,3 +314,13 @@ WHERE tiv_2015 IN (SELECT tiv_2015
                                 GROUP BY lat, lon
                                 HAVING COUNT(*) > 1) 
 
+-- 185. Department Top Three Salaries
+WITH cte AS (
+  SELECT d.name AS Department, e.name AS Employee, salary, 
+  DENSE_RANK() OVER(PARTITION BY d.name ORDER BY e.Salary DESC) AS rk FROM Employee e
+  JOIN Department d
+  ON e.departmentId = d.id
+)
+
+SELECT Department, Employee, salary AS Salary FROM cte
+WHERE rk <= 3
